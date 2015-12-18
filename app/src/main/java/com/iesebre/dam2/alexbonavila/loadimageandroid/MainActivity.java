@@ -1,5 +1,7 @@
 package com.iesebre.dam2.alexbonavila.loadimageandroid;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,17 +16,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
+import java.io.InputStream;
+import java.net.URL;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
 
-
+    ImageView imview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        imview = (ImageView) findViewById(R.id.imageView);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -103,4 +108,40 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    protected Bitmap downloadImage(String url){
+        try {
+
+            Bitmap bitmap = BitmapFactory.decodeStream((InputStream) new URL(url).getContent());
+
+            return bitmap;
+
+        } catch (Exception e) {
+
+            System.out.print(e);
+
+        }
+
+        return null;
+    }
+
+
+    public void onClic(){
+
+        new Thread(new Runnable() {
+            public void run() {
+                final Bitmap bitmap = downloadImage("http://helgram.com/content/uploads/2013/11/compilashun_error_thumb_night.jpg");
+                imview.post(new Runnable() {
+                    public void run() {
+                        imview.setImageBitmap(bitmap);
+                    }
+                });
+            }
+        }).start();
+
+
+    }
+
+
+
 }
